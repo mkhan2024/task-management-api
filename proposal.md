@@ -103,3 +103,9 @@ interface Comment {
   createdBy: string; // Firebase user uid
   createdAt: Date;
 }
+
+## Role-Based Authorization
+
+All the endpoints will be using the Firebase Authentication with custom claims for the roles.
+Normal users can only create, update and delete their own projects, Tasks and Comments
+Admins will have extra permissions like viewing all the projects or moderate the comments.
