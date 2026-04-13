@@ -1,10 +1,11 @@
-import { db } from "../../config/firebaseConfig";
+import { db } from "../../../config/firebaseConfig";
+import { DocumentData, QueryDocumentSnapshot } from "firebase-admin/firestore";
 import { Comment } from "../models/commentModel";
 
 const COLLECTION = "comments";
 
 export const commentRepository = {
-    async create(comment: Omit<Comment, "id">): Promise<Comment> {
+    async create(comment: Omit<Comment, "id" | "createdAt">): Promise<Comment> {
         const docRef = await db.collection(COLLECTION).add({
             ...comment,
             createdAt: new Date(),
@@ -17,7 +18,7 @@ export const commentRepository = {
         const snapshot = await db.collection(COLLECTION)
             .where("taskId", "==", taskId)
             .get();
-        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Comment));
+        return snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => ({ id: doc.id, ...doc.data() } as Comment));
     },
 
     async delete(id: string): Promise<boolean> {

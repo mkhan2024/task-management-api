@@ -1,10 +1,11 @@
-import { db } from "../../config/firebaseConfig";
+import { db } from "../../../config/firebaseConfig";
+import { DocumentData, QueryDocumentSnapshot } from "firebase-admin/firestore";
 import { Task } from "../models/taskModel";
 
 const COLLECTION = "tasks";
 
 export const taskRepository = {
-    async create(task: Omit<Task, "id">): Promise<Task> {
+    async create(task: Omit<Task, "id" | "createdAt" | "updatedAt">): Promise<Task> {
         const docRef = await db.collection(COLLECTION).add({
             ...task,
             createdAt: new Date(),
@@ -18,12 +19,12 @@ export const taskRepository = {
         const snapshot = await db.collection(COLLECTION)
             .where("projectId", "==", projectId)
             .get();
-        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Task));
+        return snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => ({ id: doc.id, ...doc.data() } as Task));
     },
 
     async findById(id: string): Promise<Task | null> {
         const doc = await db.collection(COLLECTION).doc(id).get();
-        return doc.exists ? { id: doc.id, ...doc.data() } as Task : null;
+        return doc.exists ? ({ id: doc.id, ...doc.data() } as Task) : null;
     },
 
     async update(id: string, data: Partial<Task>): Promise<Task | null> {
