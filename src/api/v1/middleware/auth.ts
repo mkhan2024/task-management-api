@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { auth } from "../../config/firebaseConfig";
+import { auth } from "../../../config/firebaseConfig";
 
 export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
     try {
