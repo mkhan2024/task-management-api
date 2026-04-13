@@ -1,11 +1,35 @@
 {
+  "name": "task-management-api",
+  "version": "1.0.0",
+  "description": "Simple Task Management API - Capstone Project",
+  "main": "dist/server.js",
+  "scripts": {
+    "start": "node dist/server.js",
+    "dev": "ts-node src/server.ts",
+    "build": "tsc",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "lint": "eslint src --ext .ts",
+    "prepare": "husky install"
+  },
   "dependencies": {
+    "cors": "^2.8.6",
     "express-rate-limit": "^8.3.2",
+    "firebase-admin": "^13.8.0",
+    "helmet": "^8.1.0",
+    "joi": "^18.1.2",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/jest": "^30.0.0",
+    "@types/joi": "^17.2.2",
     "@types/swagger-jsdoc": "^6.0.4",
-    "@types/swagger-ui-express": "^4.1.8"
+    "@types/swagger-ui-express": "^4.1.8",
+    "jest": "^30.3.0",
+    "ts-jest": "^29.4.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
   }
 }
