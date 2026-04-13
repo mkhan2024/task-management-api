@@ -1,0 +1,9 @@
+export interface Project {
+    id: string;
+    name: string;
+    description?: string;
+    status: "active" | "completed";
+    createdBy: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
