@@ -1,13 +1,15 @@
 import Joi from "joi";
 
-export const createProjectSchema = Joi.object({
-    name: Joi.string().required().min(3).max(100),
+export const createTaskSchema = Joi.object({
+    title: Joi.string().min(3).max(100).required(),
     description: Joi.string().allow("").max(500),
-    status: Joi.string().valid("active", "completed").default("active"),
+    dueDate: Joi.date().optional(),
+    status: Joi.string().valid("todo", "in-progress", "done").default("todo"),
 });
 
-export const updateProjectSchema = Joi.object({
-    name: Joi.string().min(3).max(100),
+export const updateTaskSchema = Joi.object({
+    title: Joi.string().min(3).max(100),
     description: Joi.string().allow("").max(500),
-    status: Joi.string().valid("active", "completed"),
+    dueDate: Joi.date().optional(),
+    status: Joi.string().valid("todo", "in-progress", "done"),
 });
