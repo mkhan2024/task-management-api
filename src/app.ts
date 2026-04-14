@@ -15,9 +15,8 @@ const app: Express = express();
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
-app.use(apiLimiter); // Rate limiting
+app.use(apiLimiter);
 
-// Swagger Documentation
 setupSwagger(app);
 
 // Health Check
@@ -26,7 +25,6 @@ app.get("/api/v1/health", (req, res) => {
         status: "OK",
         uptime: process.uptime(),
         timestamp: new Date().toISOString(),
-        version: "1.0.0",
     });
 });
 
@@ -35,7 +33,7 @@ app.use("/api/v1/projects", projectRoutes);
 app.use("/api/v1", taskRoutes);
 app.use("/api/v1", commentRoutes);
 
-// Global Error Handler
+// Global error handler
 app.use(errorHandler);
 
 export default app;
