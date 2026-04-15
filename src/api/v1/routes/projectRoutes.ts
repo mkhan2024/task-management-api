@@ -8,10 +8,28 @@ const router = Router();
 
 router.use(authenticate);
 
+/**
+ * @swagger
+ * /projects:
+ *   get:
+ *     summary: Get all my projects
+ *     tags: [Projects]
+ *     responses:
+ *       200:
+ *         description: List of projects
+ */
 router.get("/", projectController.getAllProjects);
+
+/**
+ * @swagger
+ * /projects:
+ *   post:
+ *     summary: Create a new project
+ *     tags: [Projects]
+ *     responses:
+ *       201:
+ *         description: Project created successfully
+ */
 router.post("/", validateRequest({ body: createProjectSchema }), projectController.createProject);
-router.get("/:id", projectController.getProjectById);
-router.put("/:id", validateRequest({ body: updateProjectSchema }), projectController.updateProject);
-router.delete("/:id", projectController.deleteProject);
 
 export default router;
