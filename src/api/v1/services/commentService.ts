@@ -1,42 +1,31 @@
-import { db } from "../../../config/firebaseConfig";
+import { commentRepository } from "../repositories/commentRepository";
 import { Comment } from "../models/commentModel";
 
-const COLLECTION = "comments";
+export const commentService = {
+    async createComment(
+        data: Omit<Comment, "id" | "createdAt" | "createdBy">,
+        userId: string
+    ): Promise<Comment> {
+        const commentData = {
+            ...data,
+            createdBy: userId,
+        };
 
-export const commentRepository = {
-    async create(comment: Omit<Comment, "id" | "createdAt">): Promise<Comment> {
-        const docRef = await db.collection(COLLECTION).add({
-            ...comment,
-            createdAt: new Date(),
-        });
-
-        const doc = await docRef.get();
-        return { id: doc.id, ...doc.data() } as Comment;
+        return await commentRepository.create(commentData);
     },
 
-    async findByTaskId(taskId: string): Promise<Comment[]> {
-        const snapshot = await db.collection(COLLECTION)
-            .where("taskId", "==", taskId)
-            .get();
-
-        return snapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-        } as Comment));
+    async getCommentsByTask(taskId: string, userId: string): Promise<Comment[]> {
+        const comments = await commentRepository.findByTaskId(taskId);
+        return comments.filter((comment) => comment.createdBy === userId);
     },
 
-    async findById(id: string): Promise<Comment | null> {
-        const doc = await db.collection(COLLECTION).doc(id).get();
+    async deleteComment(id: string, userId: string): Promise<boolean> {
+        const comment = await commentRepository.findById(id);
 
-        if (!doc.exists) {
-            return null;
+        if (!comment || comment.createdBy !== userId) {
+            return false;
         }
 
-        return { id: doc.id, ...doc.data() } as Comment;
-    },
-
-    async delete(id: string): Promise<boolean> {
-        await db.collection(COLLECTION).doc(id).delete();
-        return true;
+        return await commentRepository.delete(id);
     }
 };

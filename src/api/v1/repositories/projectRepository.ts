@@ -1,5 +1,4 @@
 import { db } from "../../../config/firebaseConfig";
-import { DocumentData, QueryDocumentSnapshot } from "firebase-admin/firestore";
 import { Project } from "../models/projectModel";
 
 const COLLECTION = "projects";
@@ -11,6 +10,7 @@ export const projectRepository = {
             createdAt: new Date(),
             updatedAt: new Date(),
         });
+
         const doc = await docRef.get();
         return { id: doc.id, ...doc.data() } as Project;
     },
@@ -24,7 +24,8 @@ export const projectRepository = {
         const snapshot = await db.collection(COLLECTION)
             .where("createdBy", "==", userId)
             .get();
-        return snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => ({ id: doc.id, ...doc.data() } as Project));
+
+        return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Project));
     },
 
     async update(id: string, data: Partial<Project>): Promise<Project | null> {
@@ -32,6 +33,7 @@ export const projectRepository = {
             ...data,
             updatedAt: new Date(),
         });
+
         return this.findById(id);
     },
 

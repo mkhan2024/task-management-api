@@ -35,9 +35,14 @@ export const projectController = {
 
     async getProjectById(req: Request, res: Response, next: NextFunction) {
         try {
+            const userId = req.user?.uid;
             const { id } = req.params as { id: string };
 
-            const project = await projectService.getProjectById(id);
+            if (!userId) {
+                return res.status(401).json({ error: "Unauthorized: No user ID" });
+            }
+
+            const project = await projectService.getProjectById(id, userId);
 
             if (!project) {
                 return res.status(404).json({ error: "Project not found" });
@@ -89,5 +94,5 @@ export const projectController = {
         } catch (error) {
             next(error);
         }
-    },
+    }
 };

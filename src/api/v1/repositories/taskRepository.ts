@@ -1,5 +1,4 @@
 import { db } from "../../../config/firebaseConfig";
-import { DocumentData, QueryDocumentSnapshot } from "firebase-admin/firestore";
 import { Task } from "../models/taskModel";
 
 const COLLECTION = "tasks";
@@ -11,6 +10,7 @@ export const taskRepository = {
             createdAt: new Date(),
             updatedAt: new Date(),
         });
+
         const doc = await docRef.get();
         return { id: doc.id, ...doc.data() } as Task;
     },
@@ -19,7 +19,8 @@ export const taskRepository = {
         const snapshot = await db.collection(COLLECTION)
             .where("projectId", "==", projectId)
             .get();
-        return snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => ({ id: doc.id, ...doc.data() } as Task));
+
+        return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Task));
     },
 
     async findById(id: string): Promise<Task | null> {
@@ -32,6 +33,7 @@ export const taskRepository = {
             ...data,
             updatedAt: new Date(),
         });
+
         return this.findById(id);
     },
 

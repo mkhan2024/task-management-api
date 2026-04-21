@@ -4,7 +4,7 @@ import { Comment } from "../models/commentModel";
 const COLLECTION = "comments";
 
 export const commentRepository = {
-    async create(comment: Omit<Comment, "id">): Promise<Comment> {
+    async create(comment: Omit<Comment, "id" | "createdAt">): Promise<Comment> {
         const docRef = await db.collection(COLLECTION).add({
             ...comment,
             createdAt: new Date(),
