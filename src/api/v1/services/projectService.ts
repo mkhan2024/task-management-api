@@ -9,9 +9,8 @@ export const projectService = {
         const projectData = {
             ...data,
             createdBy: userId,
-            status: data.status || "active",   // ← Default value added
+            status: data.status || "active",
         };
-
         return await projectRepository.create(projectData);
     },
 
@@ -19,31 +18,27 @@ export const projectService = {
         return await projectRepository.findByUserId(userId);
     },
 
-    async getProjectById(id: string): Promise<Project | null> {
-        return await projectRepository.findById(id);
-    },
-
-    async updateProject(
-        id: string,
-        data: Partial<Omit<Project, "id" | "createdAt" | "updatedAt" | "createdBy">>,
-        userId: string
-    ): Promise<Project | null> {
-        const existingProject = await projectRepository.findById(id);
-
-        if (!existingProject || existingProject.createdBy !== userId) {
+    async getProjectById(id: string, userId: string): Promise<Project | null> {
+        const project = await projectRepository.findById(id);
+        if (!project || project.createdBy !== userId) {
             return null;
         }
+        return project;
+    },
 
+    async updateProject(id: string, data: Partial<Project>, userId: string): Promise<Project | null> {
+        const project = await projectRepository.findById(id);
+        if (!project || project.createdBy !== userId) {
+            return null;
+        }
         return await projectRepository.update(id, data);
     },
 
     async deleteProject(id: string, userId: string): Promise<boolean> {
-        const existingProject = await projectRepository.findById(id);
-
-        if (!existingProject || existingProject.createdBy !== userId) {
+        const project = await projectRepository.findById(id);
+        if (!project || project.createdBy !== userId) {
             return false;
         }
-
         return await projectRepository.delete(id);
-    },
+    }
 };
