@@ -14,6 +14,10 @@ export const taskService = {
         return await taskRepository.create(taskData);
     },
 
+    async getAllTasksAdmin(): Promise<Task[]> {
+        return await taskRepository.findAll();
+    },
+
     async getTasksByProject(projectId: string, userId: string): Promise<Task[]> {
         const tasks = await taskRepository.findByProjectId(projectId);
         return tasks.filter((task) => task.createdBy === userId);

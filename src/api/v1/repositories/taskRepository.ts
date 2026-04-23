@@ -15,12 +15,24 @@ export const taskRepository = {
         return { id: doc.id, ...doc.data() } as Task;
     },
 
+    async findAll(): Promise<Task[]> {
+        const snapshot = await db.collection(COLLECTION).get();
+
+        return snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        } as Task));
+    },
+
     async findByProjectId(projectId: string): Promise<Task[]> {
         const snapshot = await db.collection(COLLECTION)
             .where("projectId", "==", projectId)
             .get();
 
-        return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Task));
+        return snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        } as Task));
     },
 
     async findById(id: string): Promise<Task | null> {

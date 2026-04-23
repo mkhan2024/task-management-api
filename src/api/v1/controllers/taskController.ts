@@ -3,6 +3,15 @@ import { taskService } from "../services/taskService";
 import { successResponse } from "../models/responseModel";
 
 export const taskController = {
+    async getAllTasksAdmin(req: Request, res: Response, next: NextFunction) {
+        try {
+            const tasks = await taskService.getAllTasksAdmin();
+            return res.status(200).json(successResponse(tasks, "All tasks retrieved successfully"));
+        } catch (error) {
+            next(error);
+        }
+    },
+
     async getTasksByProject(req: Request, res: Response, next: NextFunction) {
         try {
             const userId = req.user?.uid;

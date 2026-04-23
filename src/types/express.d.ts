@@ -5,6 +5,7 @@ declare global {
         interface Request {
             user?: DecodedIdToken & {
                 role?: string;
+                admin?: boolean;
                 roles?: string[];
             };
         }
