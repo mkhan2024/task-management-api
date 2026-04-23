@@ -1,7 +1,7 @@
 import path from "path";
 import swaggerJsdoc from "swagger-jsdoc";
 
-const swaggerOptions = {
+const swaggerOptions: swaggerJsdoc.Options = {
     definition: {
         openapi: "3.0.0",
         info: {
@@ -15,6 +15,15 @@ const swaggerOptions = {
                 description: "Local server",
             },
         ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: "http",
+                    scheme: "bearer",
+                    bearerFormat: "JWT",
+                },
+            },
+        },
     },
     apis: [
         path.join(process.cwd(), "src/api/v1/routes/*.ts"),
