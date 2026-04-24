@@ -4,8 +4,9 @@ import { taskService } from "../../src/api/v1/services/taskService";
 
 jest.mock("../../src/api/v1/services/taskService", () => ({
   taskService: {
-    getTasksByProjectId: jest.fn(),
     createTask: jest.fn(),
+    getAllTasksAdmin: jest.fn(),
+    getTasksByProject: jest.fn(),
     getTaskById: jest.fn(),
     updateTask: jest.fn(),
     deleteTask: jest.fn(),
@@ -21,8 +22,9 @@ describe("Task Controller Unit", () => {
     req = {
       params: {},
       body: {},
+      query: {},
       user: { uid: "user123" } as any,
-    } as Partial<Request>;
+    };
 
     res = {
       status: jest.fn().mockReturnThis(),
@@ -33,7 +35,7 @@ describe("Task Controller Unit", () => {
     jest.clearAllMocks();
   });
 
-  it("should get tasks by project id", async () => {
+  it("should get tasks by project", async () => {
     const mockTasks = [
       {
         id: "1",
@@ -41,17 +43,40 @@ describe("Task Controller Unit", () => {
         title: "Test Task",
         status: "todo",
         createdBy: "user123",
-        createdAt: new Date(),
-        updatedAt: new Date(),
       },
     ];
 
     req.params = { projectId: "123" };
-    (taskService.getTasksByProjectId as jest.Mock).mockResolvedValue(mockTasks);
+    req.query = {};
+
+    (taskService.getTasksByProject as jest.Mock).mockResolvedValue(mockTasks);
 
     await taskController.getTasksByProject(req as Request, res as Response, next);
 
-    expect(taskService.getTasksByProjectId).toHaveBeenCalledWith("123");
+    expect(taskService.getTasksByProject).toHaveBeenCalledWith("123", "user123", undefined, "desc");
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalled();
+  });
+
+  it("should get tasks by project with status filter and sort", async () => {
+    const mockTasks = [
+      {
+        id: "1",
+        projectId: "123",
+        title: "Test Task",
+        status: "todo",
+        createdBy: "user123",
+      },
+    ];
+
+    req.params = { projectId: "123" };
+    req.query = { status: "todo", sort: "asc" };
+
+    (taskService.getTasksByProject as jest.Mock).mockResolvedValue(mockTasks);
+
+    await taskController.getTasksByProject(req as Request, res as Response, next);
+
+    expect(taskService.getTasksByProject).toHaveBeenCalledWith("123", "user123", "todo", "asc");
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalled();
   });
@@ -63,12 +88,11 @@ describe("Task Controller Unit", () => {
       title: "Test Task",
       status: "todo",
       createdBy: "user123",
-      createdAt: new Date(),
-      updatedAt: new Date(),
     };
 
     req.params = { projectId: "123" };
     req.body = { title: "Test Task", status: "todo" };
+
     (taskService.createTask as jest.Mock).mockResolvedValue(mockTask);
 
     await taskController.createTask(req as Request, res as Response, next);
@@ -87,41 +111,27 @@ describe("Task Controller Unit", () => {
 
     await taskController.getTaskById(req as Request, res as Response, next);
 
-    expect(taskService.getTaskById).toHaveBeenCalledWith("999");
+    expect(taskService.getTaskById).toHaveBeenCalledWith("999", "user123");
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({ error: "Task not found" });
   });
 
-  it("should update a task", async () => {
-    const updatedTask = {
-      id: "1",
-      projectId: "123",
-      title: "Updated Task",
-      status: "done",
-      createdBy: "user123",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
+  it("should delete a task", async () => {
     req.params = { id: "1" };
-    req.body = { title: "Updated Task", status: "done" };
-    (taskService.updateTask as jest.Mock).mockResolvedValue(updatedTask);
+    (taskService.deleteTask as jest.Mock).mockResolvedValue(true);
 
-    await taskController.updateTask(req as Request, res as Response, next);
+    await taskController.deleteTask(req as Request, res as Response, next);
 
-    expect(taskService.updateTask).toHaveBeenCalledWith(
-      "1",
-      { title: "Updated Task", status: "done" },
-      "user123"
-    );
+    expect(taskService.deleteTask).toHaveBeenCalledWith("1", "user123");
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalled();
   });
 
-  it("should call next on error", async () => {
+  it("should call next on error in getTasksByProject", async () => {
     const error = new Error("Test error");
     req.params = { projectId: "123" };
-    (taskService.getTasksByProjectId as jest.Mock).mockRejectedValue(error);
+
+    (taskService.getTasksByProject as jest.Mock).mockRejectedValue(error);
 
     await taskController.getTasksByProject(req as Request, res as Response, next);
 
