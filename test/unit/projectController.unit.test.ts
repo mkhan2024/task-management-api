@@ -22,7 +22,7 @@ describe("Project Controller Unit", () => {
       params: {},
       body: {},
       user: { uid: "user123" } as any,
-    } as Partial<Request>;
+    };
 
     res = {
       status: jest.fn().mockReturnThis(),
@@ -47,6 +47,7 @@ describe("Project Controller Unit", () => {
   it("should create a project", async () => {
     const mockProject = { id: "1", name: "Test Project" };
     req.body = { name: "Test Project" };
+
     (projectService.createProject as jest.Mock).mockResolvedValue(mockProject);
 
     await projectController.createProject(req as Request, res as Response, next);
@@ -65,7 +66,7 @@ describe("Project Controller Unit", () => {
 
     await projectController.getProjectById(req as Request, res as Response, next);
 
-    expect(projectService.getProjectById).toHaveBeenCalledWith("999");
+    expect(projectService.getProjectById).toHaveBeenCalledWith("999", "user123");
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({ error: "Project not found" });
   });
@@ -74,6 +75,7 @@ describe("Project Controller Unit", () => {
     const updatedProject = { id: "1", name: "Updated Project" };
     req.params = { id: "1" };
     req.body = { name: "Updated Project" };
+
     (projectService.updateProject as jest.Mock).mockResolvedValue(updatedProject);
 
     await projectController.updateProject(req as Request, res as Response, next);

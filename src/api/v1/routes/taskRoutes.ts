@@ -40,6 +40,20 @@ router.get("/admin/tasks", authorizeRoles(["admin"]), taskController.getAllTasks
  *         required: true
  *         schema:
  *           type: string
+ *       - in: query
+ *         name: status
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: [todo, in-progress, done]
+ *         description: Filter tasks by status
+ *       - in: query
+ *         name: sort
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *         description: Sort tasks by due date
  *     responses:
  *       200:
  *         description: Tasks retrieved successfully

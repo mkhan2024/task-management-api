@@ -17,11 +17,21 @@ export const taskController = {
             const userId = req.user?.uid;
             const { projectId } = req.params as { projectId: string };
 
+            const status =
+                typeof req.query.status === "string"
+                    ? req.query.status
+                    : undefined;
+
+            const sort =
+                req.query.sort === "asc" || req.query.sort === "desc"
+                    ? req.query.sort
+                    : "desc";
+
             if (!userId) {
                 return res.status(401).json({ error: "Unauthorized: No user ID" });
             }
 
-            const tasks = await taskService.getTasksByProject(projectId, userId);
+            const tasks = await taskService.getTasksByProject(projectId, userId, status, sort);
             return res.status(200).json(successResponse(tasks, "Tasks retrieved successfully"));
         } catch (error) {
             next(error);
