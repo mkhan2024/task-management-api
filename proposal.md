@@ -62,3 +62,50 @@ I also want to add basic rate limiting with express-rate-limit, which was one of
 2. Add a project board in GitHub with the columns To Do, In Progress, Review, and Done.
 3. Create issues for the main tasks in each milestone
 4. I will be doing all development using the same Git workflow as the course notes with main, development and feature branches.
+
+
+### Update After Professor's Feedback
+## Finalized Data Models
+After feedback of the professor, I have updated the data models to keep project, task and comment structure clearer. I also made sure each item stores the information of like who created it and when it was updated.
+
+## Projects Collection
+
+interface Project {
+  id: string;
+  name: string;
+  description?: string;
+  status: "active" | "completed";
+  createdBy: string; // Firebase user uid
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+## Tasks Collection
+
+interface Task {
+  id: string;
+  projectId: string;
+  title: string;
+  description?: string;
+  dueDate?: Date;
+  status: "todo" | "in-progress" | "done";
+  createdBy: string; // Firebase user uid
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+## Comments Collection
+
+interface Comment {
+  id: string;
+  taskId: string;
+  text: string;
+  createdBy: string; // Firebase user uid
+  createdAt: Date;
+}
+
+## Role-Based Authorization
+
+All the endpoints will be using the Firebase Authentication with custom claims for the roles.
+Normal users can only create, update and delete their own projects, Tasks and Comments
+Admins will have extra permissions like viewing all the projects or moderate the comments.
